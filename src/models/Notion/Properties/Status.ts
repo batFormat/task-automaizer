@@ -1,7 +1,8 @@
 import { Expose, Type } from 'class-transformer';
 
 export enum StatusEnum {
-    Done = "Done"
+    Done = "Done",
+    Backlog = "Backlog"
 }
 
 class StatusValueObject {

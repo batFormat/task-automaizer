@@ -28,10 +28,10 @@ export default class ReportService {
         ]
 
         // fact message
-        this.fact = [`Факт ${dayjs().format('DD.MM')}`]
+        this.fact = [`<b>Факт ${dayjs().format('DD.MM')}</b>`]
 
         // Plan message
-        this.plan = [`План ${dayjs().add(1, 'day').format('DD.MM')}`]
+        this.plan = [`<b>План ${dayjs().add(1, 'day').format('DD.MM')}</b>`]
     }
 
     async setHeaderBlock() {
@@ -50,6 +50,7 @@ export default class ReportService {
     async setFactBlock() {
         for (const { properties } of this.tasks) {
             const name = properties.Name.title[0].plain_text;
+
             const status = properties.Status.status.name;
 
             const prefix = status === Notion.StatusEnum.Done ? '[+]' : '[-]';

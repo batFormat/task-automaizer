@@ -53,7 +53,14 @@ export default class NotificationService {
     }
 
     private getTasks() {
-        return this.notion.databaseQuery(undefined, [
+        const filter = {
+            property: "Status",
+            status: {
+                does_not_equal: Notion.StatusEnum.Backlog
+            }
+        }
+
+        return this.notion.databaseQuery(filter, [
             {
                 property: "Priority",
                 direction: "ascending"
