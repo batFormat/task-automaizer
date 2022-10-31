@@ -28,10 +28,10 @@ export default class ReportService {
         ]
 
         // fact message
-        this.fact = [`<b>Факт ${dayjs().format('DD.MM')}</b>`]
+        this.fact = [`<b>Факт ${dayjs().subtract(1, 'day').format('DD.MM')}</b>`]
 
         // Plan message
-        this.plan = [`<b>План ${dayjs().add(1, 'day').format('DD.MM')}</b>`]
+        this.plan = [`<b>План ${dayjs().format('DD.MM')}</b>`]
     }
 
     async setHeaderBlock() {
