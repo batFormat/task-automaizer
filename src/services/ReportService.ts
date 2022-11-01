@@ -14,8 +14,11 @@ export default class ReportService {
         this.init()
 
         this.setHeaderBlock()
+
         this.setFactBlock()
         this.setPlanBlock()
+
+        this.setPlanCompletionPercentage()
     }
 
     init() {
@@ -48,7 +51,7 @@ export default class ReportService {
     }
 
     async setFactBlock() {
-        for (const { properties } of this.tasks) {
+        for (const { properties } of this.getTaskForFact()) {
             const name = properties.Name.title[0].plain_text;
 
             const status = properties.Status.status.name;
@@ -59,8 +62,20 @@ export default class ReportService {
         };
     }
 
+    setPlanCompletionPercentage(): void {
+        const doneTasks = this.getTaskForFact()
+            .filter((task) => task.properties.Status.status.name === Notion.StatusEnum.Done);
+
+        const percent = (doneTasks.length / this.getTaskForFact().length) * 100;
+
+        this.fact.push(
+            `<b>Процент закрытия плана на день: ${Math.round(percent)}%</b>`
+        )
+    }
+
     async setPlanBlock() {
-        const tasks = this.tasks.filter((task) => task.properties.Status.status.name !== Notion.StatusEnum.Done)
+        const tasks = this.getTaskWithoutKPI()
+            .filter((task) => task.properties.Status.status.name !== Notion.StatusEnum.Done)
 
         let index = 1;
 
@@ -73,6 +88,17 @@ export default class ReportService {
 
     static getFallbackDailyReportMessage(): string {
         return `План:\n1.Дейли митап\n2. Ревью MR\n3.Изучить и приоритезировать баги в Sentry`
+    }
+
+    getTaskWithoutKPI() {
+        return this.tasks.filter((task) => !task.properties.KPI.checkbox)
+    }
+
+    getTaskForFact() {
+        return this.getTaskWithoutKPI()
+            // Only tasks created no earlier than six hours ago
+            .filter(({ created_time }) => dayjs().diff(created_time, 'hours') > 6)
+
     }
 
     getDailyReportMessage(): string {
